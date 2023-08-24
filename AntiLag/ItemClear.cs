@@ -68,7 +68,8 @@ namespace AntiLag
                         }
                         num2 = j;
                     }
-                    TShock.Utils.Broadcast(string.Format("{0} All trash items have been cleared", tag), Color.Silver);
+                    Commands.HandleCommand(TSPlayer.Server, "/sync");
+                    TShock.Utils.Broadcast(string.Format("{0} All trash items have been cleared And sync'd players to the server", tag), Color.Silver);
                     inprogress = false;
                 }
             }

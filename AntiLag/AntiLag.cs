@@ -5,7 +5,7 @@ using TerrariaApi.Server;
 
 namespace AntiLag
 {
-    [ApiVersion(2, 0)]
+    [ApiVersion(2, 1)]
     public class AntiLag : TerrariaPlugin
     {
         public override string Author => "Jewsus";
