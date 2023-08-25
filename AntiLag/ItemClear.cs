@@ -18,7 +18,7 @@ namespace AntiLag
 
         internal static void AntiLagTimer()
         {
-            Timer.Interval = AntiLag.config.clearIntevalMS;
+            Timer.Interval = AntiLag.config.clearCheckIntevalMS;
             Timer.Enabled = AntiLag.config.enabled;
             Timer.Elapsed += new ElapsedEventHandler(TimerElapsed);
         }
@@ -73,7 +73,7 @@ namespace AntiLag
 
                     TShock.Utils.Broadcast(string.Format("{0} Discovered {1} trash items. Removing in {2} seconds", tag,
                                            num - (isEvent ? AntiLag.config.itemAmountToKeepOnEvents : AntiLag.config.itemAmountToKeep), num3), Color.Silver);
-                    Thread.Sleep(AntiLag.config.baseTimeUntilClearLag * num3);
+                    Thread.Sleep(AntiLag.config.baseTimeUntilClearLagMS * num3);
                     
                     int i = 0;
                     foreach (KeyValuePair<int, Item> kvp in activeItems)
