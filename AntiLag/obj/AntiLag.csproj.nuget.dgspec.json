@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\crims\\OneDrive\\Documents\\GitHub\\AntiLag\\AntiLag\\AntiLag.csproj": {}
+    "C:\\Users\\mcjac\\AntiLag\\AntiLag\\AntiLag.csproj": {}
   },
   "projects": {
-    "C:\\Users\\crims\\OneDrive\\Documents\\GitHub\\AntiLag\\AntiLag\\AntiLag.csproj": {
+    "C:\\Users\\mcjac\\AntiLag\\AntiLag\\AntiLag.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\crims\\OneDrive\\Documents\\GitHub\\AntiLag\\AntiLag\\AntiLag.csproj",
+        "projectUniqueName": "C:\\Users\\mcjac\\AntiLag\\AntiLag\\AntiLag.csproj",
         "projectName": "AntiLag",
-        "projectPath": "C:\\Users\\crims\\OneDrive\\Documents\\GitHub\\AntiLag\\AntiLag\\AntiLag.csproj",
-        "packagesPath": "C:\\Users\\crims\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\crims\\OneDrive\\Documents\\GitHub\\AntiLag\\AntiLag\\obj\\",
+        "projectPath": "C:\\Users\\mcjac\\AntiLag\\AntiLag\\AntiLag.csproj",
+        "packagesPath": "C:\\Users\\mcjac\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mcjac\\AntiLag\\AntiLag\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Users\\mcjac\\AppData\\Roaming\\Godot\\mono\\GodotNuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\crims\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\mcjac\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\mcjac\\AppData\\Roaming\\NuGet\\config\\Godot.Offline.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -64,12 +68,26 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[6.0.19, 6.0.19]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[6.0.19, 6.0.19]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[6.0.19, 6.0.19]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.305\\RuntimeIdentifierGraph.json"
         }
       }
     }

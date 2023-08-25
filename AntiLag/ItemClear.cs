@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Timers;
 using Terraria;
@@ -12,18 +14,24 @@ namespace AntiLag
         public static bool inprogress = false;
         public static DateTime LastCheck = DateTime.UtcNow;
         public static System.Timers.Timer Timer = new System.Timers.Timer();
-        private static string tag = TShock.Utils.ColorTag("HAL9000:", Color.Orange);        
+        private static string tag = TShock.Utils.ColorTag("HAL9000:", Color.Orange);
 
         internal static void AntiLagTimer()
         {
-            Timer.Interval = 3000.0;
-            Timer.Enabled = true;
+            Timer.Interval = AntiLag.config.clearIntevalMS;
+            Timer.Enabled = AntiLag.config.enabled;
             Timer.Elapsed += new ElapsedEventHandler(TimerElapsed);
         }
 
         internal static void TimerElapsed(object sender, ElapsedEventArgs args)
         {
+            bool isEvent = (Main.invasionType == 0) ? false : true;
+
+            if (isEvent && AntiLag.config.disableHalOnEvents)
+                return;
             bool flag = !inprogress;
+            IDictionary<int,Item> activeItems = new Dictionary<int,Item>();
+            
             if (flag)
             {
                 int num = 0;
@@ -33,6 +41,7 @@ namespace AntiLag
                     bool active = Main.item[i].active;
                     if (active)
                     {
+                        activeItems.Add(i,Main.item[i]);
                         num2 = num;
                         num = num2 + 1;
                     }
@@ -56,19 +65,45 @@ namespace AntiLag
                             num3 = 5;
                         }
                     }
-                    TShock.Utils.Broadcast(string.Format("{0} Discovered {1} trash items. Removing in {2} seconds", tag, num, num3), Color.Silver);
-                    Thread.Sleep(1000 * num3);
-                    for (int j = 0; j < 400; j = num2 + 1)
+                    
+                    if( (AntiLag.config.itemAmountToKeepOnEvents != 0 && isEvent) 
+                      || (AntiLag.config.itemAmountToKeep != 0 && !isEvent) )
+                        activeItems = activeItems.OrderBy(i =>-i.Value.timeSinceItemSpawned).ToDictionary(i => i.Key, i => i.Value);
+                    
+
+                    TShock.Utils.Broadcast(string.Format("{0} Discovered {1} trash items. Removing in {2} seconds", tag,
+                                           num - (isEvent ? AntiLag.config.itemAmountToKeepOnEvents : AntiLag.config.itemAmountToKeep), num3), Color.Silver);
+                    Thread.Sleep(AntiLag.config.baseTimeUntilClearLag * num3);
+                    
+                    int i = 0;
+                    foreach (KeyValuePair<int, Item> kvp in activeItems)
                     {
-                        bool active2 = Main.item[j].active;
+                        bool active2 = kvp.Value.active;
+
+                        if (isEvent 
+                            && AntiLag.config.itemAmountToKeepOnEvents != 0
+                            && i > activeItems.Count - AntiLag.config.itemAmountToKeepOnEvents)
+                            break;
+
+                        if (!isEvent
+                           && AntiLag.config.itemAmountToKeep != 0
+                           && i > activeItems.Count - AntiLag.config.itemAmountToKeep)
+                            break;
+
                         if (active2)
                         {
-                            Main.item[j].active = false;
-                            TSPlayer.All.SendData(PacketTypes.UpdateItemDrop, "", j, 0f, 0f, 0f, 0);
+
+                            Main.item[kvp.Key].active = false;
+                            
+                            TSPlayer.All.SendData(PacketTypes.UpdateItemDrop, "", kvp.Key, 0f, 0f, 0f, 0);
                         }
-                        num2 = j;
+                        
+                        i++;
                     }
-                    Commands.HandleCommand(TSPlayer.Server, "/sync");
+                    
+                    if(AntiLag.config.syncTilesOnIntervalToo)
+                        Commands.HandleCommand(TSPlayer.Server, "/sync");
+
                     TShock.Utils.Broadcast(string.Format("{0} All trash items have been cleared And sync'd players to the server", tag), Color.Silver);
                     inprogress = false;
                 }
