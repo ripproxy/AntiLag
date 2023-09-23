@@ -11,10 +11,10 @@ namespace AntiLag
 {
     internal class ItemClear
     {
-        public static bool inprogress = false;
+        public static bool inprogress = false; // checks if the items are being cleared at the moment
         public static DateTime LastCheck = DateTime.UtcNow;
         public static System.Timers.Timer Timer = new System.Timers.Timer();
-        private static string tag = TShock.Utils.ColorTag("HAL9000:", Color.Orange);
+        private static string tag = TShock.Utils.ColorTag(AntiLag.config.tag, Color.Orange);
 
         internal static void AntiLagTimer()
         {
@@ -28,58 +28,47 @@ namespace AntiLag
             bool isEvent = (Main.invasionType == 0) ? false : true;
 
             if (isEvent && AntiLag.config.disableHalOnEvents)
-                return;
-            bool flag = !inprogress;
+                return;  
             IDictionary<int,Item> activeItems = new Dictionary<int,Item>();
             
-            if (flag)
+            if (!inprogress)
             {
-                int num = 0;
-                int num2;
-                for (int i = 0; i < 400; i = num2 + 1)
+
+                // goes through all items in the world and checks what items are active
+                for (int i = 0; i < 400; i++) 
                 {
-                    bool active = Main.item[i].active;
-                    if (active)
+                    if (Main.item[i].active)
                     {
                         activeItems.Add(i,Main.item[i]);
-                        num2 = num;
-                        num = num2 + 1;
                     }
-                    num2 = i;
                 }
-                bool flag2 = num > 150;
-                if (flag2)
+
+                int numberOfActiveItems = activeItems.Count();
+                if (numberOfActiveItems > 150)
                 {
-                    int num3 = 5;
                     inprogress = true;
-                    bool flag3 = num > 275;
-                    if (flag3)
+                    int sleepMultiplier = 5;
+                    
+                    if (numberOfActiveItems > 275)
                     {
-                        num3 = 2;
-                    }
-                    else
-                    {
-                        bool flag4 = num > 225;
-                        if (flag4)
-                        {
-                            num3 = 5;
-                        }
+                        sleepMultiplier = 2;
                     }
                     
+                    // sorts all active items by time since spawned
                     if( (AntiLag.config.itemAmountToKeepOnEvents != 0 && isEvent) 
                       || (AntiLag.config.itemAmountToKeep != 0 && !isEvent) )
                         activeItems = activeItems.OrderBy(i =>-i.Value.timeSinceItemSpawned).ToDictionary(i => i.Key, i => i.Value);
-                    
 
+                    int trashItems = numberOfActiveItems - (isEvent ? AntiLag.config.itemAmountToKeepOnEvents : AntiLag.config.itemAmountToKeep);
                     TShock.Utils.Broadcast(string.Format("{0} Discovered {1} trash items. Removing in {2} seconds", tag,
-                                           num - (isEvent ? AntiLag.config.itemAmountToKeepOnEvents : AntiLag.config.itemAmountToKeep), num3), Color.Silver);
-                    Thread.Sleep(AntiLag.config.baseTimeUntilClearLagMS * num3);
+                        trashItems, sleepMultiplier * AntiLag.config.baseTimeUntilClearLagMS / 1000), Color.Silver);
+
+
+                    Thread.Sleep(AntiLag.config.baseTimeUntilClearLagMS * sleepMultiplier);
                     
                     int i = 0;
-                    foreach (KeyValuePair<int, Item> kvp in activeItems)
+                    foreach (KeyValuePair<int, Item> pair in activeItems)
                     {
-                        bool active2 = kvp.Value.active;
-
                         if (isEvent 
                             && AntiLag.config.itemAmountToKeepOnEvents != 0
                             && i > activeItems.Count - AntiLag.config.itemAmountToKeepOnEvents)
@@ -90,12 +79,11 @@ namespace AntiLag
                            && i > activeItems.Count - AntiLag.config.itemAmountToKeep)
                             break;
 
-                        if (active2)
-                        {
 
-                            Main.item[kvp.Key].active = false;
-                            
-                            TSPlayer.All.SendData(PacketTypes.UpdateItemDrop, "", kvp.Key, 0f, 0f, 0f, 0);
+                        if (pair.Value.active)
+                        {
+                            Main.item[pair.Key].active = false;
+                            TSPlayer.All.SendData(PacketTypes.UpdateItemDrop, "", pair.Key, 0f, 0f, 0f, 0);
                         }
                         
                         i++;

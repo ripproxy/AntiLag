@@ -9,6 +9,7 @@
         public int itemAmountToKeepOnEvents = 0;
         public bool syncTilesOnIntervalToo = false;
         public int baseTimeUntilClearLagMS = 0;
+        public string tag = "";
 
         public static Config DefaultConfig()
         {
@@ -20,7 +21,8 @@
                 itemAmountToKeep = 20,
                 itemAmountToKeepOnEvents = 50,
                 syncTilesOnIntervalToo = true,
-                baseTimeUntilClearLagMS = 1000
+                baseTimeUntilClearLagMS = 1000,
+                tag = ""
             };
 
             return vConf;
