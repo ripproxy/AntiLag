@@ -59,9 +59,7 @@ namespace AntiLag
                       || (AntiLag.config.itemAmountToKeep != 0 && !isEvent) )
                         activeItems = activeItems.OrderBy(i =>-i.Value.timeSinceItemSpawned).ToDictionary(i => i.Key, i => i.Value);
 
-                    int trashItems = numberOfActiveItems - (isEvent ? AntiLag.config.itemAmountToKeepOnEvents : AntiLag.config.itemAmountToKeep);
-                    TShock.Utils.Broadcast(string.Format("{0} Discovered {1} trash items. Removing in {2} seconds", tag,
-                        trashItems, sleepMultiplier * AntiLag.config.baseTimeUntilClearLagMS / 1000), Color.Silver);
+                    int trashItems = numberOfActiveItems - (isEvent ? AntiLag.config.itemAmountToKeepOnEvents : AntiLag.config.itemAmountToKeep)
 
 
                     Thread.Sleep(AntiLag.config.baseTimeUntilClearLagMS * sleepMultiplier);
@@ -92,7 +90,6 @@ namespace AntiLag
                     if(AntiLag.config.syncTilesOnIntervalToo)
                         Commands.HandleCommand(TSPlayer.Server, "/sync");
 
-                    TShock.Utils.Broadcast(string.Format("{0} All trash items have been cleared And sync'd players to the server", tag), Color.Silver);
                     inprogress = false;
                 }
             }
