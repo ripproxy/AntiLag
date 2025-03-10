@@ -59,7 +59,7 @@ namespace AntiLag
                       || (AntiLag.config.itemAmountToKeep != 0 && !isEvent) )
                         activeItems = activeItems.OrderBy(i =>-i.Value.timeSinceItemSpawned).ToDictionary(i => i.Key, i => i.Value);
 
-                    int trashItems = numberOfActiveItems - (isEvent ? AntiLag.config.itemAmountToKeepOnEvents : AntiLag.config.itemAmountToKeep)
+                    int trashItems = numberOfActiveItems - (isEvent ? AntiLag.config.itemAmountToKeepOnEvents : AntiLag.config.itemAmountToKeep);
 
 
                     Thread.Sleep(AntiLag.config.baseTimeUntilClearLagMS * sleepMultiplier);
